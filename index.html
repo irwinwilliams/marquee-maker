@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Marquee Maker</title>
+  <meta name="description" content="Marquee Maker">
+  <meta name="author" content="C-WBN\iwilliams">
+    <style>
+    .configurator
+    {
+        border:solid thin black;
+        background-color: white;
+        padding:20px;
+        font-family: sans-serif;
+        padding-bottom:40px;
+    }
+    label
+    {
+        display:inline-block;
+        width:100px;
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+    textarea
+    {
+        display: block;
+        height: 4em;
+        width:80%; 
+    }
+    input, select
+    {
+        margin:2px 5px;
+        width:150px;
+        height: 1.5em;
+    }
+    #menu
+    {
+        float:right;
+        
+    }
+    #menu input{
+        width:50px;
+    }
+    #show
+    {
+        position: absolute;
+        top: 98%;
+        left: 98%;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- <div><button id="colorpicker">Choose background color</button></div> -->
+    <section class="configurator" id="configurator"> 
+        <form method="GET">
+            <div><label>Content</label><textarea id="content" name="content"></textarea></div>
+            <div>
+                <label>Background</label>
+                <input type="color" name="bgcolor" id="bgcolor" onchange="updateDisplay();" value="#FFFFFF" />
+            </div>
+            <div>
+                <label>Marquee</label>
+                <input type="color" name="textcolor" id="textcolor" onchange="updateDisplay();" value="#FFFFFF" />
+            </div>
+            <div>
+                    <label>Font</label>
+                    <select id="fontFamily" name="fontFamily" onchange="updateDisplay();">
+                            <option> Serif </option>
+                            <option> Arial </option>
+                            <option> Sans-Serif </option>                                  
+                            <option> Tahoma </option>
+                            <option> Verdana </option>
+                            <option> Lucida Sans Unicode </option>                               
+                    </select>
+                </div>
+            <div>
+                    <label>Size</label>
+                    <input type="number" name="size" id="size" onchange="updateDisplay();" value="20" />
+            </div>
+            <div id="menu">
+                    <input type="button" onclick="return hide();" value="hide" />
+                    <input type="submit" value="share"/>
+                </div>
+        </form>
+    </section>
+    <section>
+        <marquee id="display"></marquee>
+    </section>
+    <section>
+        <div id="show">
+            <span onclick="show()">+</span>
+        </div>
+    </section>
+</body>
+<script type="text/javascript">
+//utils
+function convertQueryStringToMap() {
+    let result =new Map();
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (pair && pair.length > 1 )
+        {
+            pair[1] = pair[1].replace(/\+/g, '%20'); 
+            result.set(
+                decodeURIComponent(pair[0]),
+                decodeURIComponent(pair[1]));
+        }
+    }
+    return result;
+}
+
+function loadQueryVariables()
+{
+    let keys = QUERY_STRING_MAP.keys();
+    for (let key of keys) {
+        let element = document.getElementById(key);
+        let val = QUERY_STRING_MAP.get(key);
+
+        if (element)
+        {
+            if (element.value)
+            {
+                element.value = val;
+            }
+            else
+                element.innerHTML = val;
+        }
+    }
+
+}
+
+function updateDisplay()
+{
+    document.body.style.background = bgcolor.value;
+
+    var family = fontFamily.options[fontFamily.selectedIndex].value;
+    display.innerHTML = content.value;
+    display.style.fontFamily = family;
+    display.style.color = textcolor.value;
+    display.style.fontSize = size.value+"pt";
+
+
+}
+
+function setup(){
+    content.onchange = updateDisplay;
+    if (display.innerHTML.length == 0)
+        display.innerHTML = content.value;
+}
+
+</script>
+<script type="text/javascript">
+    const QUERY_STRING_MAP = convertQueryStringToMap();
+    loadQueryVariables();
+
+    function show()
+    {
+        configurator.style.display = "block";
+        return false;
+    }
+
+    function hide()
+    {
+        configurator.style.display = "none";
+        return false;
+    }
+
+    setup();
+
+    updateDisplay();
+
+  </script>
+  
+
+</html>
